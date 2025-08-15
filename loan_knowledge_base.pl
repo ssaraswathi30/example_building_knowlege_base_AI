@@ -1,1 +1,27 @@
-% Loan Decision Knowledge Base\n% Based on Decision Tree Analysis of Real Data\n\n% Main decision rules extracted from the tree:\n\n% Rule 1: Young applicants with short loan terms get approved\nloan_approved(Sex, Age, LoanTerm, NumAccounts, LoanType, LoanArea) :-\n    Age =< 31,\n    LoanTerm =< 8.5.\n\n% Rule 2: Young applicants with long loan terms get rejected\nloan_rejected(Sex, Age, LoanTerm, NumAccounts, LoanType, LoanArea) :-\n    Age =< 31,\n    LoanTerm > 8.5.\n\n% Rule 3: Older applicants generally get rejected\nloan_rejected(Sex, Age, LoanTerm, NumAccounts, LoanType, LoanArea) :-\n    Age > 31.\n\n% Main classification predicate\nclassify_loan(Sex, Age, LoanTerm, NumAccounts, LoanType, LoanArea, approved) :-\n    loan_approved(Sex, Age, LoanTerm, NumAccounts, LoanType, LoanArea).\n\nclassify_loan(Sex, Age, LoanTerm, NumAccounts, LoanType, LoanArea, rejected) :-\n    loan_rejected(Sex, Age, LoanTerm, NumAccounts, LoanType, LoanArea).\n\n% Default rejection if no approval rule matches\nclassify_loan(Sex, Age, LoanTerm, NumAccounts, LoanType, LoanArea, rejected) :-\n    \\+ loan_approved(Sex, Age, LoanTerm, NumAccounts, LoanType, LoanArea).\n\n% Examples of usage:\n% ?- classify_loan(male, 25, 7, 2, home, 50, Decision).\n% ?- classify_loan(female, 35, 10, 3, personal, 100, Decision).\n
+% Loan Classification Knowledge Base
+% Generated from Decision Tree Rules
+% Usage: classify_loan(Sex, Age, LoanTerm, NumAccounts, LoanType, LoanArea, Decision)
+
+% Rule 1: Confidence 1.000, Samples: 1
+classify_loan(Sex, Age, LoanTerm, NumAccounts, LoanType, LoanArea, approved) :-
+    Age <= 31.00,
+    LoanTerm <= 8.50.
+
+% Rule 2: Confidence 0.571, Samples: 1
+classify_loan(Sex, Age, LoanTerm, NumAccounts, LoanType, LoanArea, rejected) :-
+    Age <= 31.00,
+    LoanTerm > 8.50.
+
+% Rule 3: Confidence 0.727, Samples: 1
+classify_loan(Sex, Age, LoanTerm, NumAccounts, LoanType, LoanArea, rejected) :-
+    Age > 31.00,
+    member(LoanType, [home, personal]).
+
+% Rule 4: Confidence 1.000, Samples: 1
+classify_loan(Sex, Age, LoanTerm, NumAccounts, LoanType, LoanArea, rejected) :-
+    Age > 31.00,
+    LoanType = auto.
+
+% Helper predicates
+member(X, [X|_]).
+member(X, [_|T]) :- member(X, T).
